@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -24,5 +25,26 @@ class AuthController extends Controller
                 'expires_in' => auth('api')->factory()->getTTL() * 60,
             ],
         ], 201);
+    }
+
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $credentials = $request->validated();
+
+        if (! $token = auth('api')->attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid credentials.',
+            ], 401);
+        }
+
+        return response()->json([
+            'message' => 'Login successful.',
+            'user' => auth('api')->user(),
+            'authorization' => [
+                'token' => $token,
+                'type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+            ],
+        ]);
     }
 }

@@ -47,4 +47,11 @@ class AuthController extends Controller
             ],
         ]);
     }
+
+    public function me(): JsonResponse
+    {
+        return response()->json([
+            'user' => auth('api')->user(),
+        ]);
+    }
 }

@@ -11,3 +11,4 @@ Route::get('/health', function () {
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:api')->get('/me', [AuthController::class, 'me']);

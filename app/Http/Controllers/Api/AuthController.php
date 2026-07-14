@@ -63,4 +63,18 @@ class AuthController extends Controller
             'message' => 'Logout successful.',
         ]);
     }
+
+    public function refresh(): JsonResponse
+    {
+        $token = auth('api')->refresh();
+
+        return response()->json([
+            'message' => 'Token refreshed successfully.',
+            'authorization' => [
+                'token' => $token,
+                'type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+            ],
+        ]);
+    }
 }

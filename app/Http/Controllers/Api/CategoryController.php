@@ -21,6 +21,15 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function show(Category $category): JsonResponse
+    {
+        abort_if(! $category->is_active, 404);
+
+        return response()->json([
+            'data' => $category,
+        ]);
+    }
+
     public function store(StoreCategoryRequest $request): JsonResponse
     {
         $category = Category::create($request->validated());

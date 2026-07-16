@@ -7,6 +7,7 @@ use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -49,6 +50,20 @@ class CategoryController extends Controller
 
         return response()->json([
             'message' => 'Category updated successfully.',
+            'data' => $category->fresh(),
+        ]);
+    }
+
+    public function destroy(Category $category): JsonResponse
+    {
+        Gate::authorize('delete', $category);
+
+        $category->update([
+            'is_active' => false,
+        ]);
+
+        return response()->json([
+            'message' => 'Category deactivated successfully.',
             'data' => $category->fresh(),
         ]);
     }

@@ -17,4 +17,9 @@ class CategoryPolicy
     {
         return $user->role === UserRole::Admin;
     }
+
+    public function delete(User $user, Category $category): bool
+    {
+        return $user->role === UserRole::Admin;
+    }
 }

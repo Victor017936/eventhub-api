@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('allows an authenticated user to create a category', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $token = auth('api')->login($user);
 
     $response = $this
@@ -45,7 +45,7 @@ it('rejects a duplicate category slug', function () {
         'slug' => 'technology',
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()->admin()->create();
     $token = auth('api')->login($user);
 
     $this
@@ -56,4 +56,21 @@ it('rejects a duplicate category slug', function () {
         ])
         ->assertUnprocessable()
         ->assertJsonValidationErrors(['slug']);
+});
+
+it('forbids a regular user from creating a category', function () {
+    $user = User::factory()->create();
+    $token = auth('api')->login($user);
+
+    $this
+        ->withHeader('Authorization', "Bearer {$token}")
+        ->postJson('/api/categories', [
+            'name' => 'Technology',
+            'slug' => 'technology',
+        ])
+        ->assertForbidden();
+
+    $this->assertDatabaseMissing('categories', [
+        'slug' => 'technology',
+    ]);
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 
@@ -18,5 +19,15 @@ class CategoryController extends Controller
         return response()->json([
             'data' => $categories,
         ]);
+    }
+
+    public function store(StoreCategoryRequest $request): JsonResponse
+    {
+        $category = Category::create($request->validated());
+
+        return response()->json([
+            'message' => 'Category created successfully.',
+            'data' => $category,
+        ], 201);
     }
 }

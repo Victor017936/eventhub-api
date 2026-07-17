@@ -23,4 +23,20 @@ class EventController extends Controller
 
         return response()->json($events);
     }
+
+    public function show(Event $event): JsonResponse
+{
+    $event->load('category:id,name,slug,is_active');
+
+    abort_if(
+        $event->status !== EventStatus::Published
+        || $event->starts_at->isPast()
+        || ! $event->category->is_active,
+        404
+    );
+
+    return response()->json([
+        'data' => $event,
+    ]);
+}
 }

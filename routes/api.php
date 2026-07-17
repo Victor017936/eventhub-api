@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', function () {
@@ -15,6 +16,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
+Route::get('/events', [EventController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Support\Facades\Route;
@@ -50,5 +51,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get(
         '/admin/events/{event}/reservations',
         [ReservationController::class, 'adminIndex']
+    );
+    Route::get(
+        '/admin/dashboard',
+        [DashboardController::class, 'index']
     );
 });

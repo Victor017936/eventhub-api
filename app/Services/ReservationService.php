@@ -74,6 +74,41 @@ class ReservationService
         });
     }
 
+    public function cancel(Reservation $reservation): Reservation
+    {
+        return DB::transaction(function () use ($reservation) {
+            $lockedReservation = Reservation::query()
+                ->with('event:id,title,slug,starts_at')
+                ->lockForUpdate()
+                ->findOrFail($reservation->getKey());
+
+            if ($lockedReservation->status === ReservationStatus::Cancelled) {
+                throw ValidationException::withMessages([
+                    'reservation' => [
+                        'This reservation is already cancelled.',
+                    ],
+                ]);
+            }
+
+            if ($lockedReservation->event->starts_at->isPast()) {
+                throw ValidationException::withMessages([
+                    'reservation' => [
+                        'A reservation for a past event cannot be cancelled.',
+                    ],
+                ]);
+            }
+
+            $lockedReservation->update([
+                'status' => ReservationStatus::Cancelled,
+                'cancelled_at' => now(),
+            ]);
+
+            return $lockedReservation
+                ->refresh()
+                ->load('event:id,title,slug,starts_at');
+        });
+    }
+
     private function ensureEventCanBeReserved(Event $event): void
     {
         if ($event->status !== EventStatus::Published) {

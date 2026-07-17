@@ -43,4 +43,8 @@ Route::middleware('auth:api')->group(function () {
         '/reservations/{reservation}',
         [ReservationController::class, 'show']
     );
+    Route::delete(
+        '/reservations/{reservation}',
+        [ReservationController::class, 'destroy']
+    );
 });

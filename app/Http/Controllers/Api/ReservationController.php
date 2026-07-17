@@ -45,6 +45,20 @@ class ReservationController extends Controller
         ]);
     }
 
+    public function destroy(
+        Reservation $reservation,
+        ReservationService $reservationService
+    ): JsonResponse {
+        Gate::authorize('delete', $reservation);
+
+        $reservation = $reservationService->cancel($reservation);
+
+        return response()->json([
+            'message' => 'Reservation cancelled successfully.',
+            'data' => $reservation,
+        ]);
+    }
+
     public function store(
         StoreReservationRequest $request,
         Event $event,

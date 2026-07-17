@@ -11,4 +11,9 @@ class ReservationPolicy
     {
         return $reservation->user_id === $user->id;
     }
+
+    public function delete(User $user, Reservation $reservation): bool
+    {
+        return $reservation->user_id === $user->id;
+    }
 }

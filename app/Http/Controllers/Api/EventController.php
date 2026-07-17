@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\EventStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Event\StoreEventRequest;
+use App\Http\Requests\Event\UpdateEventRequest;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 
@@ -38,6 +39,21 @@ class EventController extends Controller
             'message' => 'Event created successfully.',
             'data' => $event,
         ], 201);
+    }
+
+    public function update(
+        UpdateEventRequest $request,
+        Event $event
+    ): JsonResponse {
+        $event->update($request->validated());
+
+        $event->refresh();
+        $event->load('category:id,name,slug');
+
+        return response()->json([
+            'message' => 'Event updated successfully.',
+            'data' => $event,
+        ]);
     }
 
     public function show(Event $event): JsonResponse

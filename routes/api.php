@@ -28,4 +28,5 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/categories/{category}', [CategoryController::class, 'update']);
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
     Route::post('/events', [EventController::class, 'store']);
+    Route::put('/events/{event}', [EventController::class, 'update']);
 });

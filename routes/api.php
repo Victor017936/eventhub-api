@@ -29,4 +29,5 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
     Route::post('/events', [EventController::class, 'store']);
     Route::put('/events/{event}', [EventController::class, 'update']);
+    Route::delete('/events/{event}', [EventController::class, 'destroy']);
 });

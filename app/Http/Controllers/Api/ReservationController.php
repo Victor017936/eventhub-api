@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reservation\StoreReservationRequest;
+use App\Jobs\SendReservationConfirmation;
 use App\Models\Event;
 use App\Models\Reservation;
 use App\Models\User;
@@ -113,6 +114,8 @@ class ReservationController extends Controller
         $user = $request->user('api');
 
         $reservation = $reservationService->reserve($event, $user);
+        SendReservationConfirmation::dispatch($reservation)
+            ->afterCommit();
 
         $created = $reservation->wasRecentlyCreated;
 

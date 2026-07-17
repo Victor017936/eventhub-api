@@ -22,4 +22,9 @@ class EventPolicy
     {
         return $user->role === UserRole::Admin;
     }
+
+    public function viewReservations(User $user, Event $event): bool
+    {
+        return $user->role === UserRole::Admin;
+    }
 }

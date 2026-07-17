@@ -47,4 +47,8 @@ Route::middleware('auth:api')->group(function () {
         '/reservations/{reservation}',
         [ReservationController::class, 'destroy']
     );
+    Route::get(
+        '/admin/events/{event}/reservations',
+        [ReservationController::class, 'adminIndex']
+    );
 });

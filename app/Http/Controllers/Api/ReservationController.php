@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ReservationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reservation\StoreReservationRequest;
 use App\Models\Event;
@@ -29,6 +30,50 @@ class ReservationController extends Controller
             ->paginate(10);
 
         return response()->json($reservations);
+    }
+
+    public function adminIndex(Event $event): JsonResponse
+    {
+        Gate::authorize('viewReservations', $event);
+
+        $event->loadCount([
+            'reservations as confirmed_reservations_count' => function ($query) {
+                $query->where(
+                    'status',
+                    ReservationStatus::Confirmed->value
+                );
+            },
+            'reservations as cancelled_reservations_count' => function ($query) {
+                $query->where(
+                    'status',
+                    ReservationStatus::Cancelled->value
+                );
+            },
+        ]);
+
+        $reservations = $event
+            ->reservations()
+            ->with('user:id,name,email')
+            ->orderByDesc('id')
+            ->paginate(20);
+
+        return response()->json([
+            'event' => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'capacity' => $event->capacity,
+            ],
+            'summary' => [
+                'confirmed' => $event->confirmed_reservations_count,
+                'cancelled' => $event->cancelled_reservations_count,
+                'available_places' => max(
+                    0,
+                    $event->capacity
+                        - $event->confirmed_reservations_count
+                ),
+            ],
+            'reservations' => $reservations,
+        ]);
     }
 
     public function show(Reservation $reservation): JsonResponse

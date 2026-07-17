@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Reservation\StoreReservationRequest;
 use App\Models\Event;
+use App\Models\Reservation;
 use App\Models\User;
 use App\Services\ReservationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends Controller
 {
@@ -27,6 +29,20 @@ class ReservationController extends Controller
             ->paginate(10);
 
         return response()->json($reservations);
+    }
+
+    public function show(Reservation $reservation): JsonResponse
+    {
+        Gate::authorize('view', $reservation);
+
+        $reservation->load([
+            'event:id,category_id,title,slug,location,starts_at,ends_at,status',
+            'event.category:id,name,slug',
+        ]);
+
+        return response()->json([
+            'data' => $reservation,
+        ]);
     }
 
     public function store(

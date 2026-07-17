@@ -39,4 +39,8 @@ Route::middleware('auth:api')->group(function () {
         '/my-reservations',
         [ReservationController::class, 'index']
     );
+    Route::get(
+        '/reservations/{reservation}',
+        [ReservationController::class, 'show']
+    );
 });

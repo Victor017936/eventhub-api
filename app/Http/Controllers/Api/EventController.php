@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\EventStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Event\StoreEventRequest;
 use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 
@@ -24,19 +25,34 @@ class EventController extends Controller
         return response()->json($events);
     }
 
+    public function store(StoreEventRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $data['created_by'] = auth('api')->id();
+
+        $event = Event::create($data);
+
+        $event->load('category:id,name,slug');
+
+        return response()->json([
+            'message' => 'Event created successfully.',
+            'data' => $event,
+        ], 201);
+    }
+
     public function show(Event $event): JsonResponse
-{
-    $event->load('category:id,name,slug,is_active');
+    {
+        $event->load('category:id,name,slug,is_active');
 
-    abort_if(
-        $event->status !== EventStatus::Published
-        || $event->starts_at->isPast()
-        || ! $event->category->is_active,
-        404
-    );
+        abort_if(
+            $event->status !== EventStatus::Published
+            || $event->starts_at->isPast()
+            || ! $event->category->is_active,
+            404
+        );
 
-    return response()->json([
-        'data' => $event,
-    ]);
-}
+        return response()->json([
+            'data' => $event,
+        ]);
+    }
 }

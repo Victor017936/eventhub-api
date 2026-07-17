@@ -35,4 +35,8 @@ Route::middleware('auth:api')->group(function () {
         '/events/{event}/reservations',
         [ReservationController::class, 'store']
     );
+    Route::get(
+        '/my-reservations',
+        [ReservationController::class, 'index']
+    );
 });

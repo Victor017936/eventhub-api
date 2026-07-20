@@ -22,6 +22,30 @@ export async function getMyReservations(
     return response.data;
 }
 
+export async function getMyReservationForEvent(
+    eventId: number,
+): Promise<ReservationItem | null> {
+    let page = 1;
+    let lastPage = 1;
+
+    do {
+        const response = await getMyReservations(page);
+
+        const reservation = response.data.find(
+            (item) => item.event_id === eventId,
+        );
+
+        if (reservation) {
+            return reservation;
+        }
+
+        lastPage = response.last_page;
+        page += 1;
+    } while (page <= lastPage);
+
+    return null;
+}
+
 export async function cancelReservation(
     reservationId: number,
 ): Promise<void> {

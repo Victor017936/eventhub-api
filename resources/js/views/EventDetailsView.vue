@@ -1,23 +1,56 @@
 ﻿<script setup lang="ts">
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getApiErrorMessage } from '@/services/errors';
 import { getEvent } from '@/services/events';
-import { createReservation } from '@/services/reservations';
+import {
+    createReservation,
+    getMyReservationForEvent,
+} from '@/services/reservations';
 import { useAuthStore } from '@/stores/auth';
 import type { EventItem } from '@/types/event';
+import type { ReservationItem } from '@/types/reservation';
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
 const event = ref<EventItem | null>(null);
+const currentReservation = ref<ReservationItem | null>(null);
+
 const isLoading = ref(true);
 const isReserving = ref(false);
 
 const errorMessage = ref('');
 const reservationErrorMessage = ref('');
 const successMessage = ref('');
+
+const reservationButtonLabel = computed(() => {
+    if (isReserving.value) {
+        return 'Se procesează...';
+    }
+
+    if (currentReservation.value?.status === 'confirmed') {
+        return 'Rezervare confirmată';
+    }
+
+    if (currentReservation.value?.status === 'cancelled') {
+        return 'Rezervă din nou';
+    }
+
+    if (! authStore.isAuthenticated) {
+        return 'Autentifică-te pentru rezervare';
+    }
+
+    return 'Rezervă un loc';
+});
+
+const reservationButtonDisabled = computed(() => {
+    return (
+        isReserving.value
+        || currentReservation.value?.status === 'confirmed'
+    );
+});
 
 function formatDate(date: string): string {
     return new Intl.DateTimeFormat('ro-RO', {
@@ -26,9 +59,32 @@ function formatDate(date: string): string {
     }).format(new Date(date));
 }
 
+async function loadReservationState(
+    eventId: number,
+): Promise<void> {
+    currentReservation.value = null;
+    reservationErrorMessage.value = '';
+
+    if (! authStore.isAuthenticated) {
+        return;
+    }
+
+    try {
+        currentReservation.value =
+            await getMyReservationForEvent(eventId);
+    } catch (exception: unknown) {
+        reservationErrorMessage.value = getApiErrorMessage(
+            exception,
+            'Starea rezervării nu a putut fi verificată.',
+        );
+    }
+}
+
 async function loadEvent(): Promise<void> {
     isLoading.value = true;
     errorMessage.value = '';
+    reservationErrorMessage.value = '';
+    successMessage.value = '';
     event.value = null;
 
     const eventId = Number(route.params.id);
@@ -42,6 +98,8 @@ async function loadEvent(): Promise<void> {
 
     try {
         event.value = await getEvent(eventId);
+
+        await loadReservationState(eventId);
     } catch (exception: unknown) {
         errorMessage.value = getApiErrorMessage(
             exception,
@@ -67,17 +125,27 @@ async function reservePlace(): Promise<void> {
         return;
     }
 
-    if (! event.value) {
+    if (
+        ! event.value
+        || currentReservation.value?.status === 'confirmed'
+    ) {
         return;
     }
+
+    const wasCancelled =
+        currentReservation.value?.status === 'cancelled';
 
     isReserving.value = true;
 
     try {
         await createReservation(event.value.id);
 
-        successMessage.value =
-            'Rezervarea a fost creată cu succes.';
+        currentReservation.value =
+            await getMyReservationForEvent(event.value.id);
+
+        successMessage.value = wasCancelled
+            ? 'Rezervarea a fost reactivată cu succes.'
+            : 'Rezervarea a fost creată cu succes.';
     } catch (exception: unknown) {
         reservationErrorMessage.value = getApiErrorMessage(
             exception,
@@ -187,6 +255,26 @@ watch(
                 </section>
 
                 <p
+                    v-if="
+                        ! successMessage
+                        && currentReservation?.status === 'confirmed'
+                    "
+                    class="success-message"
+                >
+                    Ai deja o rezervare confirmată pentru acest eveniment.
+                </p>
+
+                <p
+                    v-else-if="
+                        ! successMessage
+                        && currentReservation?.status === 'cancelled'
+                    "
+                    class="info-message"
+                >
+                    Rezervarea anterioară este anulată. Poți rezerva din nou.
+                </p>
+
+                <p
                     v-if="successMessage"
                     class="success-message"
                 >
@@ -203,20 +291,10 @@ watch(
                 <button
                     class="reservation-button"
                     type="button"
-                    :disabled="isReserving || Boolean(successMessage)"
+                    :disabled="reservationButtonDisabled"
                     @click="reservePlace"
                 >
-                    <template v-if="successMessage">
-                        Rezervare confirmată
-                    </template>
-
-                    <template v-else-if="isReserving">
-                        Se procesează...
-                    </template>
-
-                    <template v-else>
-                        Rezervă un loc
-                    </template>
+                    {{ reservationButtonLabel }}
                 </button>
             </article>
 

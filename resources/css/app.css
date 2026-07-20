@@ -630,3 +630,13 @@ h1 {
     font-weight: 700;
     text-align: center;
 }
+
+.info-message {
+    margin: 0 0 1.25rem;
+    padding: 0.85rem 1rem;
+    color: #1e40af;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.65rem;
+    line-height: 1.5;
+}

@@ -65,6 +65,13 @@ onMounted(() => {
                         Vezi situația generală a platformei EventHub.
                     </p>
                 </div>
+
+                <RouterLink
+                    class="primary-button"
+                    to="/admin/categories"
+                >
+                    Administrează categoriile
+                </RouterLink>
             </div>
 
             <p
@@ -235,3 +242,4 @@ onMounted(() => {
         </div>
     </main>
 </template>
+

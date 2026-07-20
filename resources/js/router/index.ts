@@ -2,6 +2,8 @@
     createRouter,
     createWebHistory,
 } from 'vue-router';
+
+import AdminCategoriesView from '@/views/AdminCategoriesView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsView from '@/views/EventsView.vue';
@@ -40,6 +42,15 @@ const router = createRouter({
             path: '/admin/dashboard',
             name: 'admin-dashboard',
             component: AdminDashboardView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
+            },
+        },
+        {
+            path: '/admin/categories',
+            name: 'admin-categories',
+            component: AdminCategoriesView,
             meta: {
                 requiresAuth: true,
                 requiresAdmin: true,

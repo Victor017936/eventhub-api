@@ -861,3 +861,141 @@ h1 {
         flex-direction: column;
     }
 }
+
+.admin-back-link {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.admin-form-section,
+.admin-list-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e4e8f0;
+    border-radius: 1rem;
+    box-shadow: 0 16px 35px rgb(23 32 51 / 7%);
+}
+
+.admin-section-title {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.admin-section-title h2 {
+    margin: 0;
+}
+
+.admin-category-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.admin-category-form textarea {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    color: #172033;
+    font: inherit;
+    resize: vertical;
+    border: 1px solid #ccd3df;
+    border-radius: 0.65rem;
+    outline: none;
+}
+
+.admin-category-form textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+.category-checkbox {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+    font-weight: 700;
+}
+
+.admin-categories-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.admin-category-card {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border: 1px solid #e4e8f0;
+    border-radius: 0.85rem;
+}
+
+.category-card-heading {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.category-card-heading h3 {
+    margin: 0;
+}
+
+.category-status {
+    padding: 0.3rem 0.6rem;
+    color: #166534;
+    font-size: 0.8rem;
+    font-weight: 700;
+    background: #f0fdf4;
+    border-radius: 999px;
+}
+
+.category-status-inactive {
+    color: #991b1b;
+    background: #fef2f2;
+}
+
+.category-slug {
+    margin: 0.5rem 0;
+    color: #2563eb;
+    font-size: 0.9rem;
+}
+
+.category-description {
+    margin: 0;
+    color: #64748b;
+}
+
+.category-actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.75rem;
+}
+
+.danger-button {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.danger-button:hover {
+    background: #fee2e2;
+}
+
+.danger-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+@media (max-width: 700px) {
+    .admin-heading,
+    .admin-category-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .category-actions {
+        flex-direction: column;
+    }
+}

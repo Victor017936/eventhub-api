@@ -7,6 +7,8 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use LogicException;
+use PHPOpenSourceSaver\JWTAuth\JWTGuard;
 
 class AuthController extends Controller
 {
@@ -14,7 +16,8 @@ class AuthController extends Controller
     {
         $user = User::create($request->validated());
 
-        $token = auth('api')->login($user);
+        $guard = $this->guard();
+        $token = $guard->login($user);
 
         return response()->json([
             'message' => 'User registered successfully.',
@@ -22,16 +25,18 @@ class AuthController extends Controller
             'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
-                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'expires_in' => ($guard->getTTL() ?? 0) * 60,
             ],
         ], 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->validated();
+        $guard = $this->guard();
 
-        if (! $token = auth('api')->attempt($credentials)) {
+        $token = $guard->attempt($request->validated());
+
+        if (! is_string($token)) {
             return response()->json([
                 'message' => 'Invalid credentials.',
             ], 401);
@@ -39,11 +44,11 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful.',
-            'user' => auth('api')->user(),
+            'user' => $guard->user(),
             'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
-                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'expires_in' => ($guard->getTTL() ?? 0) * 60,
             ],
         ]);
     }
@@ -51,13 +56,13 @@ class AuthController extends Controller
     public function me(): JsonResponse
     {
         return response()->json([
-            'user' => auth('api')->user(),
+            'user' => $this->guard()->user(),
         ]);
     }
 
     public function logout(): JsonResponse
     {
-        auth('api')->logout();
+        $this->guard()->logout();
 
         return response()->json([
             'message' => 'Logout successful.',
@@ -66,15 +71,29 @@ class AuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        $token = auth('api')->refresh();
+        $guard = $this->guard();
+        $token = $guard->refresh();
 
         return response()->json([
             'message' => 'Token refreshed successfully.',
             'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
-                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'expires_in' => ($guard->getTTL() ?? 0) * 60,
             ],
         ]);
+    }
+
+    private function guard(): JWTGuard
+    {
+        $guard = auth('api');
+
+        if (! $guard instanceof JWTGuard) {
+            throw new LogicException(
+                'The api authentication guard must use the JWT driver.'
+            );
+        }
+
+        return $guard;
     }
 }

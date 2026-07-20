@@ -31,7 +31,17 @@ class AdminDashboardService
                     $now,
                 ]
             )
-            ->first();
+            ->firstOrFail();
+
+        $eventsTotal = (int) $eventStats->getAttribute('total_count');
+
+        $eventsPublished = (int) $eventStats->getAttribute(
+            'published_count'
+        );
+
+        $eventsUpcoming = (int) $eventStats->getAttribute(
+            'upcoming_count'
+        );
 
         $reservationStats = Reservation::query()
             ->selectRaw('COUNT(*) AS total_count')
@@ -43,7 +53,18 @@ class AdminDashboardService
                 'SUM(CASE WHEN status = ? THEN 1 ELSE 0 END) AS cancelled_count',
                 [ReservationStatus::Cancelled->value]
             )
-            ->first();
+            ->firstOrFail();
+        $reservationsTotal = (int) $reservationStats->getAttribute(
+            'total_count'
+        );
+
+        $reservationsConfirmed = (int) $reservationStats->getAttribute(
+            'confirmed_count'
+        );
+
+        $reservationsCancelled = (int) $reservationStats->getAttribute(
+            'cancelled_count'
+        );
 
         $topEvents = Event::query()
             ->leftJoin('reservations', function ($join) {
@@ -72,8 +93,9 @@ class AdminDashboardService
             ->limit(5)
             ->get()
             ->map(function (Event $event): array {
-                $confirmedReservations = (int) $event
-                    ->confirmed_reservations;
+                $confirmedReservations = (int) $event->getAttribute(
+                    'confirmed_reservations'
+                );
 
                 $capacity = (int) $event->capacity;
 
@@ -104,24 +126,14 @@ class AdminDashboardService
                     ->count(),
             ],
             'events' => [
-                'total' => (int) ($eventStats?->total_count ?? 0),
-                'published' => (int) (
-                    $eventStats?->published_count ?? 0
-                ),
-                'upcoming' => (int) (
-                    $eventStats?->upcoming_count ?? 0
-                ),
+                'total' => $eventsTotal,
+                'published' => $eventsPublished,
+                'upcoming' => $eventsUpcoming,
             ],
             'reservations' => [
-                'total' => (int) (
-                    $reservationStats?->total_count ?? 0
-                ),
-                'confirmed' => (int) (
-                    $reservationStats?->confirmed_count ?? 0
-                ),
-                'cancelled' => (int) (
-                    $reservationStats?->cancelled_count ?? 0
-                ),
+                'total' => $reservationsTotal,
+                'confirmed' => $reservationsConfirmed,
+                'cancelled' => $reservationsCancelled,
             ],
             'top_events' => $topEvents,
         ];

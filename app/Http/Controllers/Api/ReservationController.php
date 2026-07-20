@@ -51,6 +51,13 @@ class ReservationController extends Controller
                 );
             },
         ]);
+        $confirmedReservationsCount = (int) $event->getAttribute(
+            'confirmed_reservations_count'
+        );
+
+        $cancelledReservationsCount = (int) $event->getAttribute(
+            'cancelled_reservations_count'
+        );
 
         $reservations = $event
             ->reservations()
@@ -65,12 +72,11 @@ class ReservationController extends Controller
                 'capacity' => $event->capacity,
             ],
             'summary' => [
-                'confirmed' => $event->confirmed_reservations_count,
-                'cancelled' => $event->cancelled_reservations_count,
+                'confirmed' => $confirmedReservationsCount,
+                'cancelled' => $cancelledReservationsCount,
                 'available_places' => max(
                     0,
-                    $event->capacity
-                        - $event->confirmed_reservations_count
+                    $event->capacity - $confirmedReservationsCount
                 ),
             ],
             'reservations' => $reservations,

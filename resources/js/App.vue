@@ -34,6 +34,13 @@ async function logout(): Promise<void> {
                             Rezervările mele
                         </RouterLink>
 
+                        <RouterLink
+                            v-if="authStore.isAdmin"
+                            to="/admin/dashboard"
+                        >
+                            Administrare
+                        </RouterLink>
+
                         <span v-if="authStore.user">
                             {{ authStore.user.name }}
                         </span>

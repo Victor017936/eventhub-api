@@ -2,6 +2,7 @@
     createRouter,
     createWebHistory,
 } from 'vue-router';
+import AdminDashboardView from '@/views/AdminDashboardView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsView from '@/views/EventsView.vue';
 import HomeView from '@/views/HomeView.vue';
@@ -33,6 +34,15 @@ const router = createRouter({
             component: MyReservationsView,
             meta: {
                 requiresAuth: true,
+            },
+        },
+        {
+            path: '/admin/dashboard',
+            name: 'admin-dashboard',
+            component: AdminDashboardView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
             },
         },
         {

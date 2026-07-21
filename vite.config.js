@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
+﻿import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
-import { fileURLToPath, URL } from 'node:url';
+import laravel from 'laravel-vite-plugin';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
     plugins: [
@@ -28,5 +28,15 @@ export default defineConfig({
                 new URL('./resources/js', import.meta.url),
             ),
         },
+    },
+
+    test: {
+        environment: 'jsdom',
+        setupFiles: [
+            './resources/js/tests/setup.ts',
+        ],
+        include: [
+            'resources/js/**/*.test.ts',
+        ],
     },
 });

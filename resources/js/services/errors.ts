@@ -16,9 +16,9 @@ export function getApiErrorMessage(
     const responseData = exception.response?.data;
 
     if (responseData?.errors) {
-        const firstError = Object.values(responseData.errors)
-            .flat()
-            [0];
+        const firstError = Object.values(
+            responseData.errors,
+        ).flat()[0];
 
         if (firstError) {
             return firstError;
@@ -27,4 +27,3 @@ export function getApiErrorMessage(
 
     return responseData?.message ?? fallbackMessage;
 }
-

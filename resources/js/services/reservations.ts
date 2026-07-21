@@ -26,9 +26,8 @@ export async function getMyReservationForEvent(
     eventId: number,
 ): Promise<ReservationItem | null> {
     let page = 1;
-    let lastPage = 1;
 
-    do {
+    while (true) {
         const response = await getMyReservations(page);
 
         const reservation = response.data.find(
@@ -39,11 +38,12 @@ export async function getMyReservationForEvent(
             return reservation;
         }
 
-        lastPage = response.last_page;
-        page += 1;
-    } while (page <= lastPage);
+        if (response.current_page >= response.last_page) {
+            return null;
+        }
 
-    return null;
+        page += 1;
+    }
 }
 
 export async function cancelReservation(

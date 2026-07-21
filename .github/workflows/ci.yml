@@ -12,8 +12,8 @@ permissions:
   contents: read
 
 jobs:
-  quality:
-    name: Tests and static analysis
+  backend:
+    name: Backend tests and analysis
     runs-on: ubuntu-latest
 
     steps:
@@ -41,13 +41,13 @@ jobs:
           php artisan key:generate
           php artisan jwt:secret --force
 
-      - name: Check code style
+      - name: Check PHP code style
         run: vendor/bin/pint --test
 
-      - name: Run static analysis
+      - name: Run PHP static analysis
         run: vendor/bin/phpstan analyse --memory-limit=1G
 
-      - name: Run tests
+      - name: Run backend tests
         env:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
@@ -56,3 +56,33 @@ jobs:
           QUEUE_CONNECTION: sync
           MAIL_MAILER: array
         run: php artisan test
+
+  frontend:
+    name: Frontend quality checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript check
+        run: npm run type-check
+
+      - name: Run frontend tests
+        run: npm run test
+
+      - name: Build frontend
+        run: npm run build

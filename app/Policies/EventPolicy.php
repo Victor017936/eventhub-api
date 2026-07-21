@@ -8,6 +8,16 @@ use App\Models\User;
 
 class EventPolicy
 {
+    public function viewAny(User $user): bool
+    {
+        return $user->role === UserRole::Admin;
+    }
+
+    public function view(User $user, Event $event): bool
+    {
+        return $user->role === UserRole::Admin;
+    }
+
     public function create(User $user): bool
     {
         return $user->role === UserRole::Admin;
@@ -23,8 +33,10 @@ class EventPolicy
         return $user->role === UserRole::Admin;
     }
 
-    public function viewReservations(User $user, Event $event): bool
-    {
+    public function viewReservations(
+        User $user,
+        Event $event
+    ): bool {
         return $user->role === UserRole::Admin;
     }
 }

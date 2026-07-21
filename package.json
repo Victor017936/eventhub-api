@@ -6,10 +6,10 @@
         "build": "vite build",
         "dev": "vite",
         "type-check": "vue-tsc --noEmit",
-        "lint": "eslint resources/js vite.config.js eslint.config.js --max-warnings=0",
+        "lint": "eslint resources/js vite.config.js vitest.config.ts eslint.config.js --max-warnings=0",
         "lint:fix": "eslint resources/js vite.config.js eslint.config.js --fix",
-        "test": "vitest run",
-        "test:watch": "vitest"
+        "test": "vitest run --config vitest.config.ts",
+        "test:watch": "vitest --config vitest.config.ts"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

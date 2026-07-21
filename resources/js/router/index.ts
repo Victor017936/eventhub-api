@@ -5,6 +5,7 @@
 
 import AdminCategoriesView from '@/views/AdminCategoriesView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
+import AdminEventsView from '@/views/AdminEventsView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsView from '@/views/EventsView.vue';
 import HomeView from '@/views/HomeView.vue';
@@ -51,6 +52,15 @@ const router = createRouter({
             path: '/admin/categories',
             name: 'admin-categories',
             component: AdminCategoriesView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
+            },
+        },
+        {
+            path: '/admin/events',
+            name: 'admin-events',
+            component: AdminEventsView,
             meta: {
                 requiresAuth: true,
                 requiresAdmin: true,

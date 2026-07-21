@@ -999,3 +999,100 @@ h1 {
         flex-direction: column;
     }
 }
+
+.admin-event-filters {
+    margin-bottom: 2rem;
+}
+
+.admin-events-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.admin-event-card {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem;
+    border: 1px solid #e4e8f0;
+    border-radius: 0.9rem;
+}
+
+.admin-event-main {
+    min-width: 0;
+}
+
+.admin-event-heading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: center;
+}
+
+.admin-event-main h3 {
+    margin: 0.9rem 0 0.6rem;
+    font-size: 1.25rem;
+}
+
+.admin-event-status {
+    display: inline-block;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 999px;
+}
+
+.admin-event-status-draft {
+    color: #854d0e;
+    background: #fefce8;
+}
+
+.admin-event-status-published {
+    color: #166534;
+    background: #f0fdf4;
+}
+
+.admin-event-status-cancelled {
+    color: #991b1b;
+    background: #fef2f2;
+}
+
+.admin-event-status-completed {
+    color: #334155;
+    background: #f1f5f9;
+}
+
+.admin-event-meta,
+.admin-event-creator {
+    margin: 0.45rem 0;
+    color: #64748b;
+}
+
+.admin-event-description {
+    max-width: 750px;
+    margin: 0.8rem 0;
+    line-height: 1.6;
+}
+
+.admin-event-actions {
+    display: grid;
+    flex-shrink: 0;
+    gap: 0.75rem;
+    min-width: 150px;
+}
+
+.admin-event-action {
+    text-align: center;
+}
+
+@media (max-width: 750px) {
+    .admin-event-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .admin-event-actions {
+        width: 100%;
+    }
+}

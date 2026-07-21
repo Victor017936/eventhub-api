@@ -39,3 +39,17 @@ export interface AdminEventFilters {
     date_from?: string;
     date_to?: string;
 }
+
+export interface AdminEventPayload {
+    category_id: number;
+    title: string;
+    slug: string;
+    description: string;
+    location: string | null;
+    starts_at: string;
+    ends_at: string;
+    booking_starts_at: string | null;
+    booking_ends_at: string | null;
+    capacity: number;
+    status: AdminEventStatus;
+}

@@ -301,12 +301,21 @@ onMounted(() => {
                     </p>
                 </div>
 
-                <RouterLink
-                    class="admin-back-link"
-                    to="/admin/dashboard"
-                >
-                    ← Dashboard
-                </RouterLink>
+                <div class="admin-heading-actions">
+                    <RouterLink
+                        class="primary-button"
+                        to="/admin/events/create"
+                    >
+                        Creează eveniment
+                    </RouterLink>
+
+                    <RouterLink
+                        class="admin-back-link"
+                        to="/admin/dashboard"
+                    >
+                        ← Dashboard
+                    </RouterLink>
+                </div>
             </div>
 
             <p
@@ -504,6 +513,13 @@ onMounted(() => {
 
                         <div class="admin-event-actions">
                             <RouterLink
+                                class="secondary-button admin-event-action"
+                                :to="`/admin/events/${event.id}/edit`"
+                            >
+                                Editează
+                            </RouterLink>
+
+                            <RouterLink
                                 v-if="
                                     event.status === 'published'
                                 "
@@ -576,3 +592,4 @@ onMounted(() => {
         </div>
     </main>
 </template>
+

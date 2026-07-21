@@ -5,6 +5,7 @@
 
 import AdminCategoriesView from '@/views/AdminCategoriesView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
+import AdminEventFormView from '@/views/AdminEventFormView.vue';
 import AdminEventsView from '@/views/AdminEventsView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsView from '@/views/EventsView.vue';
@@ -61,6 +62,24 @@ const router = createRouter({
             path: '/admin/events',
             name: 'admin-events',
             component: AdminEventsView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
+            },
+        },
+        {
+            path: '/admin/events/create',
+            name: 'admin-event-create',
+            component: AdminEventFormView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
+            },
+        },
+        {
+            path: '/admin/events/:id/edit',
+            name: 'admin-event-edit',
+            component: AdminEventFormView,
             meta: {
                 requiresAuth: true,
                 requiresAdmin: true,

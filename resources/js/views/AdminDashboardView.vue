@@ -66,12 +66,21 @@ onMounted(() => {
                     </p>
                 </div>
 
-                <RouterLink
-                    class="primary-button"
-                    to="/admin/categories"
-                >
-                    Administrează categoriile
-                </RouterLink>
+                <div class="admin-heading-actions">
+                    <RouterLink
+                        class="primary-button"
+                        to="/admin/events"
+                    >
+                        Administrează evenimentele
+                    </RouterLink>
+
+                    <RouterLink
+                        class="secondary-button"
+                        to="/admin/categories"
+                    >
+                        Administrează categoriile
+                    </RouterLink>
+                </div>
             </div>
 
             <p
@@ -242,4 +251,5 @@ onMounted(() => {
         </div>
     </main>
 </template>
+
 

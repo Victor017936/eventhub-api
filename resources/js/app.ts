@@ -8,12 +8,40 @@ const app = createApp(App);
 const pinia = createPinia();
 
 app.use(pinia);
-app.use(router);
 
 const authStore = useAuthStore(pinia);
 
 async function startApplication(): Promise<void> {
-    await authStore.fetchUser();
+    await authStore.initialize();
+
+    window.addEventListener(
+        'eventhub:unauthorized',
+        () => {
+            const currentRoute =
+                router.currentRoute.value;
+
+            const redirectPath =
+                currentRoute.fullPath;
+
+            authStore.clearAuthentication(true);
+
+            if (currentRoute.name === 'login') {
+                return;
+            }
+
+            void router.replace({
+                name: 'login',
+                query: {
+                    redirect: redirectPath,
+                    reason: 'expired',
+                },
+            });
+        },
+    );
+
+    app.use(router);
+
+    await router.isReady();
 
     app.mount('#app');
 }

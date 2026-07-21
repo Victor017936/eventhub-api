@@ -8,7 +8,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('eventhub_token');
+    const token = localStorage.getItem(
+        'eventhub_token',
+    );
 
     if (token) {
         config.headers.set(
@@ -19,5 +21,46 @@ api.interceptors.request.use((config) => {
 
     return config;
 });
+
+api.interceptors.response.use(
+    (response) => response,
+    (error: unknown) => {
+        if (
+            axios.isAxiosError(error)
+            && error.response?.status === 401
+        ) {
+            const requestUrl =
+                error.config?.url ?? '';
+
+            const ignoredEndpoints = [
+                '/login',
+                '/register',
+                '/logout',
+                '/refresh',
+            ];
+
+            const isIgnoredEndpoint =
+                ignoredEndpoints.includes(requestUrl);
+
+            const hasAuthenticationToken =
+                localStorage.getItem(
+                    'eventhub_token',
+                ) !== null;
+
+            if (
+                hasAuthenticationToken
+                && ! isIgnoredEndpoint
+            ) {
+                window.dispatchEvent(
+                    new Event(
+                        'eventhub:unauthorized',
+                    ),
+                );
+            }
+        }
+
+        return Promise.reject(error);
+    },
+);
 
 export default api;

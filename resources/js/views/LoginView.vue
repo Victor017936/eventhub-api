@@ -1,9 +1,17 @@
 ﻿<script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {
+    computed,
+    reactive,
+    ref,
+} from 'vue';
+import {
+    useRoute,
+    useRouter,
+} from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { getApiErrorMessage } from '@/services/errors';
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
@@ -14,6 +22,26 @@ const form = reactive({
 
 const errorMessage = ref('');
 
+const informationMessage = computed(() => {
+    return route.query.reason === 'expired'
+        ? 'Sesiunea ta a expirat. Autentifică-te din nou pentru a continua.'
+        : '';
+});
+
+function getRedirectPath(): string {
+    const redirect = route.query.redirect;
+
+    if (
+        typeof redirect !== 'string'
+        || ! redirect.startsWith('/')
+        || redirect.startsWith('//')
+    ) {
+        return '/';
+    }
+
+    return redirect;
+}
+
 async function submit(): Promise<void> {
     errorMessage.value = '';
 
@@ -23,7 +51,9 @@ async function submit(): Promise<void> {
             password: form.password,
         });
 
-        await router.push('/');
+        await router.replace(
+            getRedirectPath(),
+        );
     } catch (exception: unknown) {
         errorMessage.value = getApiErrorMessage(
             exception,
@@ -49,6 +79,13 @@ async function submit(): Promise<void> {
                     Introdu datele contului tău pentru a continua.
                 </p>
             </div>
+
+            <p
+                v-if="informationMessage"
+                class="info-message"
+            >
+                {{ informationMessage }}
+            </p>
 
             <p
                 v-if="errorMessage"

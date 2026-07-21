@@ -1,5 +1,6 @@
 ﻿import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import axios from 'axios';
 import api from '@/services/api';
 
 export type UserRole = 'user' | 'admin';
@@ -43,18 +44,23 @@ export const useAuthStore = defineStore('auth', () => {
     );
 
     const isLoading = ref(false);
+    const isInitialized = ref(false);
+    const sessionExpired = ref(false);
 
     const isAuthenticated = computed(
-        () => token.value !== null,
+        () => token.value !== null && user.value !== null,
     );
 
     const isAdmin = computed(
         () => user.value?.role === 'admin',
     );
 
-    function saveAuthentication(response: AuthResponse): void {
+    function saveAuthentication(
+        response: AuthResponse,
+    ): void {
         user.value = response.user;
         token.value = response.authorization.token;
+        sessionExpired.value = false;
 
         localStorage.setItem(
             'eventhub_token',
@@ -62,14 +68,19 @@ export const useAuthStore = defineStore('auth', () => {
         );
     }
 
-    function clearAuthentication(): void {
+    function clearAuthentication(
+        wasExpired = false,
+    ): void {
         user.value = null;
         token.value = null;
+        sessionExpired.value = wasExpired;
 
         localStorage.removeItem('eventhub_token');
     }
 
-    async function login(payload: LoginPayload): Promise<void> {
+    async function login(
+        payload: LoginPayload,
+    ): Promise<void> {
         isLoading.value = true;
 
         try {
@@ -103,6 +114,8 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function fetchUser(): Promise<void> {
         if (! token.value) {
+            user.value = null;
+
             return;
         }
 
@@ -112,9 +125,29 @@ export const useAuthStore = defineStore('auth', () => {
             }>('/me');
 
             user.value = response.data.user;
-        } catch {
-            clearAuthentication();
+        } catch (exception: unknown) {
+            const isUnauthorized =
+                axios.isAxiosError(exception)
+                && exception.response?.status === 401;
+
+            if (isUnauthorized) {
+                clearAuthentication(true);
+
+                return;
+            }
+
+            user.value = null;
         }
+    }
+
+    async function initialize(): Promise<void> {
+        if (isInitialized.value) {
+            return;
+        }
+
+        await fetchUser();
+
+        isInitialized.value = true;
     }
 
     async function logout(): Promise<void> {
@@ -123,7 +156,7 @@ export const useAuthStore = defineStore('auth', () => {
                 await api.post('/logout');
             }
         } finally {
-            clearAuthentication();
+            clearAuthentication(false);
         }
     }
 
@@ -131,11 +164,15 @@ export const useAuthStore = defineStore('auth', () => {
         user,
         token,
         isLoading,
+        isInitialized,
+        sessionExpired,
         isAuthenticated,
         isAdmin,
         login,
         register,
         fetchUser,
+        initialize,
         logout,
+        clearAuthentication,
     };
 });

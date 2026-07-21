@@ -3,6 +3,7 @@
     createWebHistory,
 } from 'vue-router';
 
+import { useAuthStore } from '@/stores/auth';
 import AdminCategoriesView from '@/views/AdminCategoriesView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
 import AdminEventFormView from '@/views/AdminEventFormView.vue';
@@ -99,27 +100,62 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             component: LoginView,
+            meta: {
+                guestOnly: true,
+            },
         },
         {
             path: '/register',
             name: 'register',
             component: RegisterView,
+            meta: {
+                guestOnly: true,
+            },
         },
     ],
 });
 
-router.beforeEach((to) => {
-    const token = localStorage.getItem('eventhub_token');
+router.beforeEach(async (to) => {
+    const authStore = useAuthStore();
 
-    if (to.meta.requiresAuth && ! token) {
+    if (! authStore.isInitialized) {
+        await authStore.initialize();
+    }
+
+    if (
+        to.meta.guestOnly
+        && authStore.isAuthenticated
+    ) {
+        return {
+            name: 'home',
+        };
+    }
+
+    if (
+        to.meta.requiresAuth
+        && ! authStore.isAuthenticated
+    ) {
         return {
             name: 'login',
             query: {
                 redirect: to.fullPath,
+                ...(authStore.sessionExpired
+                    ? {
+                        reason: 'expired',
+                    }
+                    : {}),
             },
+        };
+    }
+
+    if (
+        to.meta.requiresAdmin
+        && ! authStore.isAdmin
+    ) {
+        return {
+            name: 'home',
         };
     }
 });
 
 export default router;
-

@@ -14,7 +14,10 @@ import EventsView from '@/views/EventsView.vue';
 import HomeView from '@/views/HomeView.vue';
 import LoginView from '@/views/LoginView.vue';
 import MyReservationsView from '@/views/MyReservationsView.vue';
+import NotFoundView from '@/views/NotFoundView.vue';
 import RegisterView from '@/views/RegisterView.vue';
+
+const applicationName = 'EventHub';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -23,22 +26,32 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: HomeView,
+            meta: {
+                title: 'Acasă',
+            },
         },
         {
             path: '/events',
             name: 'events',
             component: EventsView,
+            meta: {
+                title: 'Evenimente',
+            },
         },
         {
             path: '/events/:id',
             name: 'event-details',
             component: EventDetailsView,
+            meta: {
+                title: 'Detalii eveniment',
+            },
         },
         {
             path: '/my-reservations',
             name: 'my-reservations',
             component: MyReservationsView,
             meta: {
+                title: 'Rezervările mele',
                 requiresAuth: true,
             },
         },
@@ -47,6 +60,7 @@ const router = createRouter({
             name: 'admin-dashboard',
             component: AdminDashboardView,
             meta: {
+                title: 'Dashboard',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -56,6 +70,7 @@ const router = createRouter({
             name: 'admin-categories',
             component: AdminCategoriesView,
             meta: {
+                title: 'Administrare categorii',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -65,6 +80,7 @@ const router = createRouter({
             name: 'admin-events',
             component: AdminEventsView,
             meta: {
+                title: 'Administrare evenimente',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -74,6 +90,7 @@ const router = createRouter({
             name: 'admin-event-create',
             component: AdminEventFormView,
             meta: {
+                title: 'Eveniment nou',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -83,6 +100,7 @@ const router = createRouter({
             name: 'admin-event-edit',
             component: AdminEventFormView,
             meta: {
+                title: 'Editare eveniment',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -92,6 +110,7 @@ const router = createRouter({
             name: 'admin-event-reservations',
             component: AdminEventReservationsView,
             meta: {
+                title: 'Participanți',
                 requiresAuth: true,
                 requiresAdmin: true,
             },
@@ -101,6 +120,7 @@ const router = createRouter({
             name: 'login',
             component: LoginView,
             meta: {
+                title: 'Autentificare',
                 guestOnly: true,
             },
         },
@@ -109,7 +129,16 @@ const router = createRouter({
             name: 'register',
             component: RegisterView,
             meta: {
+                title: 'Creează cont',
                 guestOnly: true,
+            },
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: 'not-found',
+            component: NotFoundView,
+            meta: {
+                title: 'Pagina nu a fost găsită',
             },
         },
     ],
@@ -156,6 +185,17 @@ router.beforeEach(async (to) => {
             name: 'home',
         };
     }
+});
+
+router.afterEach((to) => {
+    const pageTitle =
+        typeof to.meta.title === 'string'
+            ? to.meta.title
+            : '';
+
+    document.title = pageTitle
+        ? `${pageTitle} | ${applicationName}`
+        : applicationName;
 });
 
 export default router;

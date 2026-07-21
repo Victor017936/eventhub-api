@@ -1,16 +1,46 @@
 ﻿<script setup lang="ts">
-import { useRouter } from 'vue-router';
+import {
+    ref,
+    watch,
+} from 'vue';
+import {
+    useRoute,
+    useRouter,
+} from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const applicationName = 'EventHub';
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
-async function logout(): Promise<void> {
-    await authStore.logout();
-    await router.push('/');
+const isMenuOpen = ref(false);
+
+function toggleMenu(): void {
+    isMenuOpen.value = ! isMenuOpen.value;
 }
+
+function closeMenu(): void {
+    isMenuOpen.value = false;
+}
+
+async function logout(): Promise<void> {
+    closeMenu();
+
+    try {
+        await authStore.logout();
+    } finally {
+        await router.push('/');
+    }
+}
+
+watch(
+    () => route.fullPath,
+    () => {
+        closeMenu();
+    },
+);
 </script>
 
 <template>
@@ -20,11 +50,31 @@ async function logout(): Promise<void> {
                 <RouterLink
                     class="logo"
                     to="/"
+                    @click="closeMenu"
                 >
                     {{ applicationName }}
                 </RouterLink>
 
-                <nav class="navigation">
+                <button
+                    class="mobile-menu-button"
+                    type="button"
+                    aria-label="Deschide meniul"
+                    aria-controls="main-navigation"
+                    :aria-expanded="isMenuOpen"
+                    @click="toggleMenu"
+                >
+                    <span />
+                    <span />
+                    <span />
+                </button>
+
+                <nav
+                    id="main-navigation"
+                    class="navigation"
+                    :class="{
+                        'navigation-open': isMenuOpen,
+                    }"
+                >
                     <RouterLink to="/events">
                         Evenimente
                     </RouterLink>
@@ -41,7 +91,10 @@ async function logout(): Promise<void> {
                             Administrare
                         </RouterLink>
 
-                        <span v-if="authStore.user">
+                        <span
+                            v-if="authStore.user"
+                            class="navigation-user"
+                        >
                             {{ authStore.user.name }}
                         </span>
 

@@ -1191,3 +1191,32 @@ h1 {
         text-align: center;
     }
 }
+
+.admin-reservations-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.reservation-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        3,
+        minmax(0, 1fr)
+    );
+    gap: 1rem;
+}
+
+.participant-email {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.participant-email:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 800px) {
+    .reservation-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}

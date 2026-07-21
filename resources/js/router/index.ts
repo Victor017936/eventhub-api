@@ -6,6 +6,7 @@
 import AdminCategoriesView from '@/views/AdminCategoriesView.vue';
 import AdminDashboardView from '@/views/AdminDashboardView.vue';
 import AdminEventFormView from '@/views/AdminEventFormView.vue';
+import AdminEventReservationsView from '@/views/AdminEventReservationsView.vue';
 import AdminEventsView from '@/views/AdminEventsView.vue';
 import EventDetailsView from '@/views/EventDetailsView.vue';
 import EventsView from '@/views/EventsView.vue';
@@ -86,6 +87,15 @@ const router = createRouter({
             },
         },
         {
+            path: '/admin/events/:id/reservations',
+            name: 'admin-event-reservations',
+            component: AdminEventReservationsView,
+            meta: {
+                requiresAuth: true,
+                requiresAdmin: true,
+            },
+        },
+        {
             path: '/login',
             name: 'login',
             component: LoginView,
@@ -112,3 +122,4 @@ router.beforeEach((to) => {
 });
 
 export default router;
+

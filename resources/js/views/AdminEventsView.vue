@@ -514,6 +514,13 @@ onMounted(() => {
                         <div class="admin-event-actions">
                             <RouterLink
                                 class="secondary-button admin-event-action"
+                                :to="`/admin/events/${event.id}/reservations`"
+                            >
+                                Participanți
+                            </RouterLink>
+
+                            <RouterLink
+                                class="secondary-button admin-event-action"
                                 :to="`/admin/events/${event.id}/edit`"
                             >
                                 Editează
@@ -592,4 +599,5 @@ onMounted(() => {
         </div>
     </main>
 </template>
+
 

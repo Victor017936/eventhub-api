@@ -1,58 +1,390 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EventHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![CI](https://github.com/Victor017936/eventhub-api/actions/workflows/ci.yml/badge.svg)
 
-## About Laravel
+EventHub is a full-stack event management and reservation application built with Laravel, Vue 3 and TypeScript.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Users can discover upcoming events, make reservations and manage their bookings. Administrators can manage categories and events, view participants and monitor platform statistics.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Main features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Public area
 
-## Learning Laravel
+- View upcoming published events
+- Search events by title or description
+- Filter events by category, location and date
+- View complete event details
+- Responsive desktop and mobile interface
+- Dynamic page titles and custom 404 page
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Authentication
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- User registration
+- JWT authentication
+- Login and logout
+- Persistent authenticated sessions
+- Automatic handling of expired tokens
+- Protected user and administrator routes
+- Redirect to the requested page after login
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Reservations
 
-## Agentic Development
+- Reserve a place at an event
+- Prevent duplicate reservations
+- Enforce event capacity
+- Enforce booking periods
+- Reactivate cancelled reservations
+- View personal reservations
+- Cancel reservations
+- Queue reservation confirmation emails
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Administration
+
+- Dashboard statistics
+- Create, edit and deactivate categories
+- Create, edit, publish and cancel events
+- Filter events by category, status and date
+- View confirmed and cancelled participants
+- Display event capacity and available places
+
+## Technology stack
+
+### Backend
+
+- PHP 8.3
+- Laravel 13
+- MySQL 8
+- Eloquent ORM
+- JWT Authentication
+- Laravel Queues
+- Laravel Scheduler
+- Laravel Pint
+- Larastan / PHPStan
+- Pest / PHPUnit
+
+### Frontend
+
+- Vue 3
+- TypeScript
+- Vue Router
+- Pinia
+- Axios
+- Vite
+- ESLint
+- Vitest
+- Vue Test Utils
+
+### Continuous integration
+
+GitHub Actions executes:
+
+- PHP code-style verification
+- PHP static analysis
+- Backend tests
+- ESLint
+- TypeScript verification
+- Frontend tests
+- Production frontend build
+
+## Requirements
+
+- PHP 8.3 or newer
+- Composer 2
+- Node.js 22 or newer
+- npm
+- MySQL 8
+
+## Installation
+
+Clone the repository:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/Victor017936/eventhub-api.git
+cd eventhub-api
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Install backend dependencies:
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Install frontend dependencies:
 
-## Code of Conduct
+```bash
+npm install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Create the environment file.
 
-## Security Vulnerabilities
+Linux or macOS:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+cp .env.example .env
+```
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Generate the Laravel application key and JWT secret:
+
+```bash
+php artisan key:generate
+php artisan jwt:secret
+```
+
+Create the MySQL database:
+
+```sql
+CREATE DATABASE eventhub
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+```
+
+Verify the database settings in `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=eventhub
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Run migrations and create the demo data:
+
+```bash
+php artisan migrate --seed
+```
+
+## Running the application
+
+### Start all development processes
+
+```bash
+composer run dev
+```
+
+This starts the Laravel server, queue listener, application logs and Vite.
+
+Open:
+
+```text
+http://127.0.0.1:8000
+```
+
+### Start processes separately
+
+Terminal 1:
+
+```bash
+php artisan serve
+```
+
+Terminal 2:
+
+```bash
+npm run dev
+```
+
+Terminal 3:
+
+```bash
+php artisan queue:work
+```
+
+Terminal 4:
+
+```bash
+php artisan schedule:work
+```
+
+## Demo accounts
+
+### Administrator
+
+```text
+Email: admin@eventhub.test
+Password: password
+```
+
+### Regular user
+
+```text
+Email: user@eventhub.test
+Password: password
+```
+
+These accounts are intended only for local development and demonstrations.
+
+## Main frontend pages
+
+| Page | Path |
+|---|---|
+| Home | `/` |
+| Public events | `/events` |
+| Event details | `/events/{id}` |
+| Personal reservations | `/my-reservations` |
+| Admin dashboard | `/admin/dashboard` |
+| Admin categories | `/admin/categories` |
+| Admin events | `/admin/events` |
+| Create event | `/admin/events/create` |
+| Edit event | `/admin/events/{id}/edit` |
+| Event participants | `/admin/events/{id}/reservations` |
+
+## API overview
+
+### Authentication
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/register` | Register a user |
+| POST | `/api/login` | Authenticate and receive a JWT |
+| POST | `/api/logout` | Log out |
+| POST | `/api/refresh` | Refresh the JWT |
+| GET | `/api/me` | Return the authenticated user |
+
+### Categories
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/categories` | List active categories |
+| GET | `/api/categories/{category}` | Show a category |
+| POST | `/api/categories` | Create a category |
+| PUT | `/api/categories/{category}` | Update a category |
+| DELETE | `/api/categories/{category}` | Deactivate a category |
+
+### Events
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/events` | List public upcoming events |
+| GET | `/api/events/{event}` | Show a public event |
+| POST | `/api/events` | Create an event |
+| PUT | `/api/events/{event}` | Update an event |
+| DELETE | `/api/events/{event}` | Cancel an event |
+| GET | `/api/admin/events` | List all events as admin |
+| GET | `/api/admin/events/{event}` | Show any event as admin |
+
+### Reservations
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/events/{event}/reservations` | Create or reactivate a reservation |
+| GET | `/api/my-reservations` | List personal reservations |
+| GET | `/api/reservations/{reservation}` | Show an owned reservation |
+| DELETE | `/api/reservations/{reservation}` | Cancel an owned reservation |
+| GET | `/api/admin/events/{event}/reservations` | List event participants |
+
+### Dashboard
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/admin/dashboard` | Return administrator statistics |
+
+## Quality checks
+
+PHP formatting:
+
+```bash
+vendor/bin/pint --test
+```
+
+PHP static analysis:
+
+```bash
+vendor/bin/phpstan analyse --memory-limit=1G
+```
+
+Backend tests:
+
+```bash
+php artisan test
+```
+
+ESLint:
+
+```bash
+npm run lint
+```
+
+TypeScript:
+
+```bash
+npm run type-check
+```
+
+Frontend tests:
+
+```bash
+npm run test
+```
+
+Production build:
+
+```bash
+npm run build
+```
+
+## Background processes
+
+Reservation confirmation emails are processed through Laravel queues:
+
+```bash
+php artisan queue:work
+```
+
+Past published events are automatically marked as completed by the Laravel scheduler:
+
+```bash
+php artisan schedule:work
+```
+
+## Project structure
+
+```text
+app/
+├── Enums/
+├── Http/
+│   ├── Controllers/Api/
+│   └── Requests/
+├── Jobs/
+├── Models/
+├── Policies/
+└── Services/
+
+resources/
+├── css/
+├── js/
+│   ├── router/
+│   ├── services/
+│   ├── stores/
+│   ├── tests/
+│   ├── types/
+│   └── views/
+└── views/
+
+routes/
+├── api.php
+└── web.php
+
+tests/
+├── Feature/
+└── Unit/
+```
+
+## Security
+
+- Protected endpoints require a valid JWT.
+- Administrator operations are protected through Laravel policies.
+- Requests are validated through dedicated form request classes.
+- Passwords are securely hashed.
+- Demo passwords must be changed before production deployment.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is available under the MIT License.
